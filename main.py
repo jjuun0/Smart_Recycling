@@ -8,8 +8,8 @@ import os
 if __name__ == '__main__':
     random_seed = 42
 
-    data_dir = 'archive/Garbage classification/Garbage classification'
-    my_data = 'C:/Users/SAMSUNG/Desktop/mydata'
+    data_dir = 'archive/Garbage classification/Garbage classification'  # 학습에 사용한 데이터
+    my_data = 'mydata'  # 테스트를 위한 데이터
     # loading and splitting data
     # transformations
     transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])

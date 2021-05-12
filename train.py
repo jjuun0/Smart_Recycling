@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data.dataloader import DataLoader
 from DeviceDataLoader import DeviceDataLoader, get_default_device, to_device
 
+# 원하는 모델 가져오기
 # MODELNAME = 'pretrained_resnet50'
 MODELNAME = 'pretrained_googlenet'
 
