@@ -7,7 +7,10 @@ from DeviceDataLoader import DeviceDataLoader, get_default_device, to_device
 
 # 원하는 모델 가져오기
 # MODELNAME = 'pretrained_resnet50'
-MODELNAME = 'pretrained_googlenet'
+# MODELNAME = 'pretrained_googlenet'
+MODELNAME = 'nomalized_resnet50'
+# MODELNAME = 'nomalized_googlenet'
+
 
 def show_batch(dl):
     for images, labels in dl:
@@ -69,7 +72,7 @@ def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
 
 
 def start_train(data_dir, classes, train_ds, val_ds):
-    batch_size = 8
+    batch_size = 16
     # print(classes)
     # print(len(train_ds), len(val_ds), len(test_ds))
 

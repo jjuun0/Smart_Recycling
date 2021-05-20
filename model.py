@@ -39,10 +39,10 @@ class ResNet(ImageClassificationBase):
     def __init__(self, classes):
         super().__init__()
         # Use a pretrained model
-        # self.network = models.resnet50(pretrained=True)
+        self.network = models.resnet50(pretrained=True)
         # self.network = models.resnet18(pretrained=True)
         # self.network = models.resnet34(pretrained=True)
-        self.network = models.googlenet(pretrained=True)
+        # self.network = models.googlenet(pretrained=True)
         # Replace last layer
         num_ftrs = self.network.fc.in_features
         self.network.fc = nn.Linear(num_ftrs, len(classes))
