@@ -4,11 +4,12 @@ from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
 from torch.utils.data.dataloader import DataLoader
 from DeviceDataLoader import DeviceDataLoader, get_default_device, to_device
+import main
 
 # 원하는 모델 가져오기
 # MODELNAME = 'pretrained_resnet50'
 # MODELNAME = 'pretrained_googlenet'
-MODELNAME = 'nomalized_resnet50'
+# MODELNAME = 'nomalized_resnet50_4'
 # MODELNAME = 'nomalized_googlenet'
 
 
@@ -94,6 +95,19 @@ def start_train(data_dir, classes, train_ds, val_ds):
     val_dl = DeviceDataLoader(val_dl, device)
     to_device(model, device)
 
+    # calculate mean, std
+    # mean = 0.
+    # std = 0.
+    # for images, _ in train_dl:
+    #     batch_samples = images.size(0)
+    #     images = images.view(batch_samples, images.size(1), -1)
+    #     mean += images.mean(2).sum(0)
+    #     std += images.std(2).sum(0)
+    # mean /= len(train_dl.dl)
+    # std /= len(train_dl.dl)
+    # print("mean : ", mean)
+    # print("std : ", std)
+
     num_epochs = 8
     opt_func = torch.optim.Adam
     lr = 5.5e-5
@@ -102,5 +116,5 @@ def start_train(data_dir, classes, train_ds, val_ds):
     plot_accuracies(history)
     plot_losses(history)
 
-    torch.save(model.state_dict(), "./" + MODELNAME)
+    torch.save(model.state_dict(), "./" + main.MODELNAME, _use_new_zipfile_serialization=False)
 

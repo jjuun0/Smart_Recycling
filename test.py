@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 from torch.autograd import Variable
 import torch.nn.functional as F
 import torchvision.utils
+import main
 import train
 import random
 from model import ResNet
 import os
 import DeviceDataLoader
+from PIL import Image
 
 def predict_image(dataset, img, model):
     device = train.get_default_device()
@@ -26,8 +28,9 @@ def predict_image(dataset, img, model):
     return dataset.classes[preds[0].item()]
 
 def predict_image_test(device, classes, img):
+    """ model predicts an image """
     model = ResNet(classes)
-    model.load_state_dict(torch.load('./' + train.MODELNAME, map_location=device))
+    model.load_state_dict(torch.load('./' + main.MODELNAME, map_location=device))
     model.eval()
     # model.cuda()
 
@@ -46,13 +49,39 @@ def predict_image_test(device, classes, img):
     return prob[0].item(), classes[preds[0].item()]
     # return dataset.classes[preds[0].item()]
 
+def predict_cuda(img):
+    device = torch.device('cuda')
+    classes = ['glass', 'plastic', 'metal']
+    trans = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
+    # https://discuss.pytorch.org/t/typeerror-pic-should-be-pil-image-or-ndarray-got-class-numpy-ndarray/20134/4
+    img = Image.fromarray(img)
+    img = trans(img)
+
+    model = ResNet(classes)
+    model.load_state_dict(torch.load('./' + main.MODELNAME, map_location=device))
+    model.eval()
+    model.cuda()
+
+    # Convert to a batch of 1
+    xb = train.to_device(img.unsqueeze(0), device)
+    # Get predictions from model
+    yb = model(xb)
+    # print('predict: ', yb[0])
+    # Pick index with highest probability
+    prob, preds = torch.max(yb, dim=1)
+
+    # Retrieve the class label
+
+    return prob[0].item(), classes[preds[0].item()]
+    # return classes[preds[0].item()]
 
 #
 def test(dataset, classes, test_ds):
+    """ model predicts images in folder """
     # classes = os.listdir(dataset)
     model = ResNet(classes)
-    model.load_state_dict(torch.load('./' + train.MODELNAME))
+    model.load_state_dict(torch.load('./' + main.MODELNAME))
     model.eval()
     model.cuda()
 

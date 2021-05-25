@@ -7,6 +7,8 @@ import os
 import PIL
 import torch
 
+MODELNAME = 'nomalized_resnet50_4'
+
 if __name__ == '__main__':
     random_seed = 42
 
@@ -14,29 +16,31 @@ if __name__ == '__main__':
     my_data = 'mydata'  # 테스트를 위한 데이터
     # loading and splitting data
     # transformations
-    transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.RandomHorizontalFlip(),
+                                          transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     dataset = ImageFolder(data_dir, transform=transformations)
     classes = os.listdir(data_dir)
     print(classes)
 
-    # train_ds, val_ds, test_ds = random_split(dataset, [835, 279, 279])
-    # train_ds, val_ds = random_split(dataset, [1000, 393])
+    train_ds, val_ds, test_ds = random_split(dataset, [835, 279, 279])
 
-    # print(len(train_ds), len(val_ds), len(test_ds))
+
     # train.start_train(data_dir, classes, train_ds, val_ds)
     # test.test(dataset, classes, test_ds)
+    trans = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-    # my_dataset = ImageFolder(my_data, transform=transformations)
-    # test.test(my_dataset, classes, my_dataset)
-    img = PIL.Image.open('temp_img/plastic1.jpeg')
+    my_dataset = ImageFolder(my_data, transform=trans)
+    test.test(my_dataset, classes, my_dataset)
+
+    # img = PIL.Image.open('temp_img/plastic2.jpeg')
     # # img.show()
-    trans = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
-    img_t = trans(img)
+
+    # img_t = trans(img)
     # print(img_t.size())
     #
     # tf = transforms.ToPILImage()
     # img_p = tf(img_t)
     # img_p.show()
     #
-    device = torch.device('cpu')
-    print(test.predict_image_test(device, classes, img_t))
+    # device = torch.device('cpu')
+    # print(test.predict_image_test(device, classes, img_t))
