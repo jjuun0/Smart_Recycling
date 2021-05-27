@@ -45,3 +45,16 @@
 ![image](https://user-images.githubusercontent.com/66052461/119500307-9cec1000-bda2-11eb-8f49-ebe946599da8.png)  
 - 클라이언트 -> client.py  
 ![image](https://user-images.githubusercontent.com/66052461/119500437-c60ca080-bda2-11eb-95b0-4634a33bf180.png)
+
+# 2021.05.27  
+- 서버 코드 수정  
+  - (수정전) : 클라이언트와 연결후에 모델 로드와 클라이언트에서 보낸 이미지를 인풋으로 넣음 -> 9초  
+  - (수정후) : 클라이언트 연결전에 모델 로드 우선적으로 한다, 다음에 클라이언트 연결을 통해 이미지를 받고 연산할 수 있게끔 수정 -> 3초 대로 줄어듦  
+- 연산 속도 처리 : 이미지 디코딩 방법  
+  - cv2.imdecode() VS io.BytesIO()  
+    - cv2 가 조금 더 빠르다  
+    - cv2.imdecode() : 3.29 초  
+    ![opencv_open](https://user-images.githubusercontent.com/66052461/119762923-8d2b1380-bee9-11eb-9d7e-c9eb817a37a0.PNG)  
+    - io.BytesIO() : 3.62 초  
+    ![io bytesio_open](https://user-images.githubusercontent.com/66052461/119762919-8b615000-bee9-11eb-8f7b-14c2db5ecc15.PNG)  
+    
