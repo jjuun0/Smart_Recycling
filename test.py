@@ -14,6 +14,7 @@ import os
 import DeviceDataLoader
 from PIL import Image
 
+
 def predict_image(dataset, img, model):
     device = train.get_default_device()
     # Convert to a batch of 1
@@ -24,30 +25,38 @@ def predict_image(dataset, img, model):
     prob, preds  = torch.max(yb, dim=1)
     # Retrieve the class label
 
-
     return dataset.classes[preds[0].item()]
 
-def predict_image_test(device, classes, img):
+
+def test_image(device, classes, img):
     """ model predicts an image """
     model = ResNet(classes)
     model.load_state_dict(torch.load('./' + main.MODELNAME, map_location=device))
     model.eval()
-    # model.cuda()
+    model.cuda()
 
-    # device = DeviceDataLoader.get_default_device()
-    
     # Convert to a batch of 1
     xb = train.to_device(img.unsqueeze(0), device)
     # Get predictions from model
     yb = model(xb)
-    # print('predict: ', yb[0])
+    print(yb)
     # Pick index with highest probability
     prob, preds = torch.max(yb, dim=1)
 
     # Retrieve the class label
-
     return prob[0].item(), classes[preds[0].item()]
-    # return dataset.classes[preds[0].item()]
+
+
+def predict(device, model, classes, img):
+    xb = DeviceDataLoader.to_device(img.unsqueeze(0), device)
+    # Get predictions from model
+    yb = model(xb)
+    # Pick index with highest probability
+    prob, preds = torch.max(yb, dim=1)
+
+    # Retrieve the class label
+    return prob[0].item(), classes[preds[0].item()]
+
 
 def predict_cuda(img):
     device = torch.device('cuda')
@@ -67,19 +76,15 @@ def predict_cuda(img):
     xb = train.to_device(img.unsqueeze(0), device)
     # Get predictions from model
     yb = model(xb)
-    # print('predict: ', yb[0])
     # Pick index with highest probability
     prob, preds = torch.max(yb, dim=1)
 
     # Retrieve the class label
-
     return prob[0].item(), classes[preds[0].item()]
-    # return classes[preds[0].item()]
 
-#
-def test(dataset, classes, test_ds):
+
+def test_folder(dataset, classes, test_ds):
     """ model predicts images in folder """
-    # classes = os.listdir(dataset)
     model = ResNet(classes)
     model.load_state_dict(torch.load('./' + main.MODELNAME))
     model.eval()
@@ -88,21 +93,20 @@ def test(dataset, classes, test_ds):
     count = 0
     # for i in range(279):
     for i in range(len(test_ds)):
-        # n = random.randint(0, 279)
         img, label = test_ds[i]
         # plt.imshow(img.permute(1, 2, 0))
         # plt.show()
         original = dataset.classes[label]
         predict = predict_image(dataset, img, model)
-        # print('Label:', dataset.classes[label], ', Predicted:', predict_image(dataset, img, model))
         if original != predict:
-            # plt.imshow(img.permute(1, 2, 0))
-            # plt.show()
+            plt.imshow(img.permute(1, 2, 0))
+            plt.show()
             print('Label:', dataset.classes[label], ', Predicted:', predict_image(dataset, img, model))
             count += 1
 
     print('error : ', count)
     print(count/len(test_ds))
+
 
 if __name__ == '__main__':
     predict_image(data, img, model)

@@ -54,16 +54,21 @@ def evaluate(model, val_loader):
 def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
     history = []
     optimizer = opt_func(model.parameters(), lr)
+
     for epoch in range(epochs):
         # Training Phase
         model.train()
         train_losses = []
+
         for batch in train_loader:
+            optimizer.zero_grad()
+            
             loss = model.training_step(batch)
             train_losses.append(loss)
+            
             loss.backward()
             optimizer.step()
-            optimizer.zero_grad()
+            
         # Validation phase
         result = evaluate(model, val_loader)
         result['train_loss'] = torch.stack(train_losses).mean().item()
@@ -72,41 +77,18 @@ def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
     return history
 
 
-def start_train(data_dir, classes, train_ds, val_ds):
+def start_train(classes, train_ds, val_ds):
     batch_size = 16
-    # print(classes)
-    # print(len(train_ds), len(val_ds), len(test_ds))
 
-    train_dl = DataLoader(train_ds, batch_size, shuffle=True, num_workers=0)
+    train_dl = DataLoader(train_ds, batch_size, shuffle=True, num_workers=0, pin_memory=True)
     val_dl = DataLoader(val_ds, batch_size*2, num_workers=0, pin_memory=True)
 
-    # print(len(train_dl), len(val_dl))
-
-    # show_batch(train_dl)
-
     model = ResNet(classes)
-
-    # porting to gpu
 
     device = get_default_device()
     print(device)
 
-    train_dl = DeviceDataLoader(train_dl, device)
-    val_dl = DeviceDataLoader(val_dl, device)
     to_device(model, device)
-
-    # calculate mean, std
-    # mean = 0.
-    # std = 0.
-    # for images, _ in train_dl:
-    #     batch_samples = images.size(0)
-    #     images = images.view(batch_samples, images.size(1), -1)
-    #     mean += images.mean(2).sum(0)
-    #     std += images.std(2).sum(0)
-    # mean /= len(train_dl.dl)
-    # std /= len(train_dl.dl)
-    # print("mean : ", mean)
-    # print("std : ", std)
 
     num_epochs = 8
     opt_func = torch.optim.Adam

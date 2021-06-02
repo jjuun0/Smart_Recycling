@@ -7,40 +7,51 @@ import os
 import PIL
 import torch
 
-MODELNAME = 'nomalized_resnet50_4'
+MODELNAME = 'model/nomalized_resnet50_10'
 
 if __name__ == '__main__':
     random_seed = 42
 
-    data_dir = 'archive/Garbage classification/Garbage classification'  # 학습에 사용한 데이터
-    my_data = 'mydata'  # 테스트를 위한 데이터
-    # loading and splitting data
-    # transformations
-    transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.RandomHorizontalFlip(),
-                                          transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    dataset = ImageFolder(data_dir, transform=transformations)
-    classes = os.listdir(data_dir)
+    train_data_path = 'archive/Garbage classification/Garbage classification'  # 학습에 사용한 데이터
+
+    train_transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.RandomHorizontalFlip(),
+                                          transforms.ToTensor(),
+                                          transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+                                          ])
+
+    train_dataset = ImageFolder(train_data_path, transform=train_transformations)
+    classes = os.listdir(train_data_path)
     print(classes)
 
-    train_ds, val_ds, test_ds = random_split(dataset, [835, 279, 279])
+    total = len(train_dataset)
+    train_size = int(0.85 * total)
+    val_size = total - train_size
+    # train_ds, val_ds, test_ds = random_split(dataset, [train_size, 279, 279])
+    train_ds, val_ds = random_split(train_dataset, [train_size, val_size])
 
+    # ----- train -----
+    # train.start_train(classes, train_ds, val_ds)
+    # test.test_folder(dataset, classes, test_ds)
+    test_transformations = transforms.Compose([transforms.Resize((256, 256)),
+                                               transforms.ToTensor(),
+                                               transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+                                               ])
 
-    # train.start_train(data_dir, classes, train_ds, val_ds)
-    # test.test(dataset, classes, test_ds)
-    trans = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    # ----- test folder -----
+    # my_data = 'mydata'  # 테스트를 위한 데이터
+    # my_dataset = ImageFolder(my_data, transform=trans)
+    # test.test_folder(my_dataset, classes, my_dataset)
 
-    my_dataset = ImageFolder(my_data, transform=trans)
-    test.test(my_dataset, classes, my_dataset)
-
-    # img = PIL.Image.open('temp_img/plastic2.jpeg')
+    # ----- test file -----
+    # transformation 을 하기 위해 PIL 로 이미지를 연다
+    img = PIL.Image.open('temp_img/test16.jpeg')
+    # img = PIL.Image.open('mydata/glass/glass12.jpg')
     # # img.show()
-
-    # img_t = trans(img)
+    img_t = test_transformations(img)
     # print(img_t.size())
-    #
     # tf = transforms.ToPILImage()
     # img_p = tf(img_t)
     # img_p.show()
-    #
     # device = torch.device('cpu')
-    # print(test.predict_image_test(device, classes, img_t))
+    device = torch.device('cuda')
+    print(test.test_image(device, classes, img_t))

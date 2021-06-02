@@ -11,13 +11,17 @@ def accuracy(outputs, labels):
 
 class ImageClassificationBase(nn.Module):
     def training_step(self, batch):
+        device = torch.device('cuda')
         images, labels = batch
+        images, labels = images.to(device), labels.to(device)
         out = self(images)  # Generate predictions
         loss = F.cross_entropy(out, labels)  # Calculate loss
         return loss
 
     def validation_step(self, batch):
+        device = torch.device('cuda')
         images, labels = batch
+        images, labels = images.to(device), labels.to(device)
         out = self(images)  # Generate predictions
         loss = F.cross_entropy(out, labels)  # Calculate loss
         acc = accuracy(out, labels)  # Calculate accuracy
