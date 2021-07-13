@@ -58,3 +58,9 @@
     - io.BytesIO() : 3.62 초  
     ![io bytesio_open](https://user-images.githubusercontent.com/66052461/119762919-8b615000-bee9-11eb-8f7b-14c2db5ecc15.PNG)  
     
+# 2021.07.13 
+- demo_focal.py
+- pytorch 프레임워크로 Custom Dataset 을 구축후에 Dataloader 를 통하여 모델을 학습하고 평가함
+- tensorboard 를 통해 모델, 학습하는데 train loss, acc 와 val loss, acc 도 시각화 하여 사진으로도 저장
+- sot 모델로 mot 개발중임 : 사용자가 selectroi 로 객체를 선택하고 트래킹하는 방식
+  - 에러 : 객체가 서로 가까우면 BBox 가 업데이트 되면서 물체가 같아져버림
