@@ -1,0 +1,7 @@
+{
+    "model_path": "model/model3",
+    "train_dataset_path": "D:/dataset/Garbage classification",
+    "test_dataset_path": "D:/dataset/test",
+    "do_train": "False",
+    "do_test": "True"
+}
